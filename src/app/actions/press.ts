@@ -72,8 +72,8 @@ export async function upsertPress(data: PressData) {
                 films: relatedFilmIds ? { connect: relatedFilmIds.map((fid: string) => ({ id: fid })) } : undefined,
                 translations: {
                     create: [
-                        { lang: 'el', ...el },
-                        { lang: 'en', ...en }
+                        { ...el, lang: 'el', title: el.title || "", description: el.description || "" },
+                        { ...en, lang: 'en', title: en.title || "", description: en.description || "" }
                     ]
                 }
             }
@@ -85,8 +85,8 @@ export async function upsertPress(data: PressData) {
                 ...commonData,
                 translations: {
                     upsert: [
-                        { where: { pressItemId_lang: { pressItemId: id, lang: 'el' } }, create: { lang: 'el', ...el }, update: el },
-                        { where: { pressItemId_lang: { pressItemId: id, lang: 'en' } }, create: { lang: 'en', ...en }, update: en },
+                        { where: { pressItemId_lang: { pressItemId: id, lang: 'el' } }, create: { ...el, lang: 'el', title: el.title || "", description: el.description || "" }, update: el },
+                        { where: { pressItemId_lang: { pressItemId: id, lang: 'en' } }, create: { ...en, lang: 'en', title: en.title || "", description: en.description || "" }, update: en },
                     ]
                 }
             }
