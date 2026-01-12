@@ -1,0 +1,330 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  EDITOR
+}
+
+enum Lang {
+  el
+  en
+}
+
+enum MediaKind {
+  IMAGE
+  VIDEO
+}
+
+enum PressKind {
+  PUBLICATION
+  REVIEW
+  INTERVIEW
+  NEWS
+}
+
+/* Auth.js core models */
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+
+  role          Role      @default(EDITOR)
+  passwordHash  String?   @db.VarChar(255)
+
+  accounts      Account[]
+  sessions      Session[]
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([email])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+/* Site content models */
+model Person {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+
+  photoId   String?
+  photo     MediaAsset? @relation(fields: [photoId], references: [id], onDelete: SetNull)
+
+  socials   Json?    // { instagram, youtube, tiktok, email, ... }
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  translations PersonTranslation[]
+}
+
+model PersonTranslation {
+  id        String @id @default(cuid())
+  personId  String
+  lang      Lang
+
+  displayName String @db.VarChar(140)
+  shortBio    String @db.Text
+  longBio     String @db.LongText
+
+  person Person @relation(fields: [personId], references: [id], onDelete: Cascade)
+
+  @@unique([personId, lang])
+  @@index([lang])
+}
+
+model Film {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+
+  published   Boolean  @default(false)
+  releaseDate DateTime?
+
+  trailerUrl  String?  @db.Text
+
+  tags        Json?    // ["bullying","lgbtqi","amea",...]
+  credits     Json?    // { director, cinematography, cast, ... }
+  
+  order       Int      @default(0)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  translations FilmTranslation[]
+  media        MediaAsset[] // Gallery/Extras if needed
+  
+  heroVideo    MediaAsset? @relation("FilmHeroVideo", fields: [heroVideoId], references: [id])
+  heroVideoId  String?
+
+  pressItems   PressItem[] @relation("FilmPress")
+  homePage     HomePage[]  @relation("HomeFeaturedFilms")
+}
+
+model FilmTranslation {
+  id        String   @id @default(cuid())
+  lang      Lang
+  title     String
+  logline   String?  @db.Text
+  synopsis  String?  @db.Text
+  metaTitle       String? @db.VarChar(200)
+  metaDescription String? @db.Text
+  keywords        String? @db.Text
+
+  film      Film     @relation(fields: [filmId], references: [id], onDelete: Cascade)
+  filmId    String
+
+  @@unique([filmId, lang])
+}
+
+model PressItem {
+  id          String    @id @default(cuid())
+  published   Boolean   @default(false)
+
+  kind        PressKind @default(PUBLICATION)
+  outlet      String?   @db.VarChar(140)
+
+  url         String    @db.Text
+  publishedAt DateTime?
+  
+  order       Int       @default(0)
+
+  imageId     String?
+  image       MediaAsset? @relation(fields: [imageId], references: [id])
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  translations PressItemTranslation[]
+  films        Film[] @relation("FilmPress")
+  gallery      MediaAsset[] @relation("PressGallery")
+  homePage     HomePage[]   @relation("HomeFeaturedPress")
+
+  @@index([kind])
+}
+
+model PressItemTranslation {
+  id         String @id @default(cuid())
+  pressItemId String
+  lang       Lang
+
+  title       String @db.VarChar(220)
+  description String @db.Text
+  metaTitle       String? @db.VarChar(200)
+  metaDescription String? @db.Text
+  keywords        String? @db.Text
+
+  pressItem PressItem @relation(fields: [pressItemId], references: [id], onDelete: Cascade)
+
+  @@unique([pressItemId, lang])
+  @@index([lang])
+}
+
+model MediaAsset {
+  id        String    @id @default(cuid())
+  kind      MediaKind
+  url       String    @db.Text
+
+  width     Int?
+  height    Int?
+  durationMs Int?
+
+  alt       String?   @db.VarChar(220)
+  order     Int       @default(0)
+
+  hashtags  Hashtag[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  persons      Person[]
+  films        Film[]
+  heroVideos   Film[]    @relation("FilmHeroVideo")
+  pressItems   PressItem[] 
+  pressGalleries PressItem[] @relation("PressGallery")
+  siteSettings SiteSettings[]
+  homeMasks    HomePage[] @relation("HomeMask")
+  homeVideos   HomePage[] @relation("HomeVideo")
+
+  @@index([kind])
+}
+
+model Hashtag {
+  id        String       @id @default(cuid())
+  text      String       @unique
+  media     MediaAsset[]
+  
+  createdAt DateTime     @default(now())
+}
+
+
+model SiteSettings {
+  id String @id @default("singleton")
+
+  homepageHeroVideoId String?
+  homepageHeroVideo   MediaAsset? @relation(fields: [homepageHeroVideoId], references: [id], onDelete: SetNull)
+
+  siteTitle           String  @default("V.Nakis")
+  contactEmail        String?
+  socialInstagram     String?
+  socialVimeo         String?
+  socialLinkedin      String?
+  socialFacebook      String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model MissionStatement {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  
+  published     Boolean   @default(false)
+  publishedDate DateTime?
+  order         Int       @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  translations MissionStatementTranslation[]
+
+  @@index([order])
+}
+
+model MissionStatementTranslation {
+  id                String @id @default(cuid())
+  missionStatementId String
+  lang              Lang
+
+  title             String @db.VarChar(200)
+  shortDescription  String @db.Text
+  longDescription   String @db.LongText
+  
+  // AI-generated phrases and mottos (stored as JSON array of strings)
+  phrases           Json?  // ["phrase 1", "phrase 2", ...]
+  mottos            Json?  // ["motto 1", "motto 2", ...]
+  
+  metaTitle         String? @db.VarChar(200)
+  metaDescription   String? @db.Text
+  keywords          String? @db.Text
+
+  missionStatement  MissionStatement @relation(fields: [missionStatementId], references: [id], onDelete: Cascade)
+
+  @@unique([missionStatementId, lang])
+  @@index([lang])
+}
+
+model HomePage {
+  id        String   @id @default("singleton")
+  updatedAt DateTime @updatedAt
+
+  // Visuals
+  svgMaskId String?
+  svgMask   MediaAsset? @relation("HomeMask", fields: [svgMaskId], references: [id])
+  
+  videoId   String?
+  video     MediaAsset? @relation("HomeVideo", fields: [videoId], references: [id])
+
+  translations HomePageTranslation[]
+
+  featuredFilms Film[]      @relation("HomeFeaturedFilms")
+  featuredPress PressItem[] @relation("HomeFeaturedPress")
+}
+
+model HomePageTranslation {
+  id         String   @id @default(cuid())
+  homePageId String
+  lang       Lang
+  
+  title      String
+  heroText   String   @db.Text
+  
+  homePage   HomePage @relation(fields: [homePageId], references: [id], onDelete: Cascade)
+  
+  @@unique([homePageId, lang])
+}
