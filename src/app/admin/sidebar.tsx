@@ -1,8 +1,11 @@
 import Link from "next/link"
 import { LogoutButton } from "./logout-button"
-import { LayoutDashboard, Film, Newspaper, Settings, ExternalLink, Target, Home } from "lucide-react"
+import { LayoutDashboard, Film, Newspaper, Settings, ExternalLink, Target, Home, ShieldCheck } from "lucide-react"
+import { auth } from "@/auth"
 
-export function Sidebar() {
+export async function Sidebar() {
+    const session = await auth()
+    const role = session?.user?.role
     return (
         <div className="w-64 bg-white/80 backdrop-blur-md border-r border-gray-100 h-screen fixed left-0 top-0 flex flex-col overflow-y-auto z-50 shadow-sm">
             <div className="p-6 border-b border-gray-100 bg-gray-50/50">
@@ -58,6 +61,15 @@ export function Sidebar() {
                     </div>
                     <span className="text-[11px] font-bold tracking-wide uppercase">Settings</span>
                 </Link>
+
+                {role === "ADMIN" && (
+                    <Link href="/admin/license" className="flex items-center gap-3 px-3 py-2 hover:bg-gray-50 rounded-lg group transition-all text-gray-600 hover:text-amber-600">
+                        <div className="p-1.5 rounded-md bg-amber-50 text-amber-500 group-hover:bg-amber-100 transition-colors">
+                            <ShieldCheck size={14} />
+                        </div>
+                        <span className="text-[11px] font-bold tracking-wide uppercase">License</span>
+                    </Link>
+                )}
             </nav>
 
             <div className="p-4 border-t border-gray-100 bg-gray-50/50">
