@@ -70,8 +70,8 @@ export async function upsertFilm(data: FilmData) {
                 media: galleryIds ? { connect: galleryIds.map((mid: string) => ({ id: mid })) } : undefined,
                 translations: {
                     create: [
-                        { lang: 'el', ...el },
-                        { lang: 'en', ...en }
+                        { ...el, lang: 'el', title: el.title || "" },
+                        { ...en, lang: 'en', title: en.title || "" }
                     ]
                 }
             }
@@ -83,8 +83,8 @@ export async function upsertFilm(data: FilmData) {
                 ...commonData,
                 translations: {
                     upsert: [
-                        { where: { filmId_lang: { filmId: id, lang: 'el' } }, create: { lang: 'el', ...el }, update: el },
-                        { where: { filmId_lang: { filmId: id, lang: 'en' } }, create: { lang: 'en', ...en }, update: en },
+                        { where: { filmId_lang: { filmId: id, lang: 'el' } }, create: { ...el, lang: 'el', title: el.title || "" }, update: el },
+                        { where: { filmId_lang: { filmId: id, lang: 'en' } }, create: { ...en, lang: 'en', title: en.title || "" }, update: en },
                     ]
                 }
             }
