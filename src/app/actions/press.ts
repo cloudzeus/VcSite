@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 import { auth } from "@/auth"
+import { PressKind } from "@prisma/client"
 
 interface PressTranslationData {
     title?: string
@@ -14,7 +15,7 @@ interface PressTranslationData {
 
 interface PressData {
     id?: string
-    kind: string
+    kind: PressKind
     outlet: string
     url: string
     published: boolean

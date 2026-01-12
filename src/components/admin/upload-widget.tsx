@@ -3,10 +3,7 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 
-interface MediaAsset {
-    id: string
-    url: string
-}
+import { MediaAsset } from "@prisma/client"
 
 interface UploadWidgetProps {
     initialAsset?: MediaAsset | null

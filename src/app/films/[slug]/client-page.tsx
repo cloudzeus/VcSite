@@ -13,7 +13,17 @@ if (typeof window !== "undefined") {
     gsap.registerPlugin(ScrollTrigger)
 }
 
-// ... existing types ...
+// Define the props interface
+interface FilmClientPageProps {
+    film: Film & {
+        translations: FilmTranslation[]
+        media: MediaAsset[]
+        heroVideo: MediaAsset | null
+        pressItems: (PressItem & {
+            translations: PressItemTranslation[];
+        })[];
+    }
+}
 
 export function FilmClientPage({ film }: FilmClientPageProps) {
     const containerRef = useRef<HTMLDivElement>(null)

@@ -59,28 +59,28 @@ export function FilmForm({ film, onSuccess, onCancel }: FilmFormProps) {
 
         const data = {
             id: isNew ? 'new' : film?.id,
-            slug: formData.get("slug"),
+            slug: (formData.get("slug") as string) || "",
             published: formData.get("published") === "on",
-            releaseDate: formData.get("releaseDate"),
+            releaseDate: (formData.get("releaseDate") as string) || undefined,
             heroVideoId,
             tags,
             credits,
             galleryIds: media.map(m => m.id),
             el: {
-                title: formData.get("el.title"),
-                logline: formData.get("el.logline"),
-                synopsis: formData.get("el.synopsis"),
-                metaTitle: formData.get("el.metaTitle"),
-                metaDescription: formData.get("el.metaDescription"),
-                keywords: formData.get("el.keywords"),
+                title: (formData.get("el.title") as string) || "",
+                logline: (formData.get("el.logline") as string) || "",
+                synopsis: (formData.get("el.synopsis") as string) || "",
+                metaTitle: (formData.get("el.metaTitle") as string) || "",
+                metaDescription: (formData.get("el.metaDescription") as string) || "",
+                keywords: (formData.get("el.keywords") as string) || "",
             },
             en: {
-                title: formData.get("en.title"),
-                logline: formData.get("en.logline"),
-                synopsis: formData.get("en.synopsis"),
-                metaTitle: formData.get("en.metaTitle"),
-                metaDescription: formData.get("en.metaDescription"),
-                keywords: formData.get("en.keywords"),
+                title: (formData.get("en.title") as string) || "",
+                logline: (formData.get("en.logline") as string) || "",
+                synopsis: (formData.get("en.synopsis") as string) || "",
+                metaTitle: (formData.get("en.metaTitle") as string) || "",
+                metaDescription: (formData.get("en.metaDescription") as string) || "",
+                keywords: (formData.get("en.keywords") as string) || "",
             }
         }
 
@@ -246,7 +246,7 @@ export function FilmForm({ film, onSuccess, onCancel }: FilmFormProps) {
 
                     <div className="bg-white/50 p-4 rounded-xl border border-gray-100 space-y-4 shadow-sm">
                         <Label className="text-[9px] uppercase text-gray-400 font-bold tracking-wider mb-2 block">Credits</Label>
-                        <CreditsEditor name="credits" initialCredits={film?.credits} />
+                        <CreditsEditor name="credits" initialCredits={film?.credits as any} />
                     </div>
                 </div>
 

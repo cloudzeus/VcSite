@@ -6,12 +6,12 @@ import { revalidatePath } from "next/cache"
 
 interface SettingsUpdate {
     siteTitle?: string
-    contactEmail?: string
-    socialInstagram?: string
-    socialVimeo?: string
-    socialLinkedin?: string
-    socialFacebook?: string
-    homepageHeroVideoId?: string
+    contactEmail?: string | null
+    socialInstagram?: string | null
+    socialVimeo?: string | null
+    socialLinkedin?: string | null
+    socialFacebook?: string | null
+    homepageHeroVideoId?: string | null
 }
 
 export async function getSettings() {

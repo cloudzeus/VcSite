@@ -12,6 +12,7 @@ import { PressForm } from "@/components/admin/press-form"
 type PressWithRelations = PressItem & {
     translations: PressItemTranslation[]
     image: MediaAsset | null
+    gallery: (MediaAsset & { hashtags?: { text: string }[] })[]
     films: { id: string }[]
 }
 

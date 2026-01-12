@@ -187,27 +187,27 @@ export function PressForm({ item, films, onSuccess, onCancel }: PressFormProps) 
 
         const data = {
             id: isNew ? 'new' : item?.id,
-            kind: formData.get("kind"),
-            outlet: formData.get("outlet"),
-            url: formData.get("url"),
+            kind: (formData.get("kind") as any),
+            outlet: (formData.get("outlet") as string) || "",
+            url: (formData.get("url") as string) || "",
             published: formData.get("published") === "on",
-            publishedAt: formData.get("publishedAt"),
+            publishedAt: (formData.get("publishedAt") as string) || undefined,
             imageId,
             galleryIds: gallery.map(g => g.id),
             relatedFilmIds: selectedFilms,
             el: {
-                title: formData.get("el.title"),
-                description: formData.get("el.description"),
-                metaTitle: formData.get("el.metaTitle"),
-                metaDescription: formData.get("el.metaDescription"),
-                keywords: formData.get("el.keywords"),
+                title: (formData.get("el.title") as string) || "",
+                description: (formData.get("el.description") as string) || "",
+                metaTitle: (formData.get("el.metaTitle") as string) || "",
+                metaDescription: (formData.get("el.metaDescription") as string) || "",
+                keywords: (formData.get("el.keywords") as string) || "",
             },
             en: {
-                title: formData.get("en.title"),
-                description: formData.get("en.description"),
-                metaTitle: formData.get("en.metaTitle"),
-                metaDescription: formData.get("en.metaDescription"),
-                keywords: formData.get("en.keywords"),
+                title: (formData.get("en.title") as string) || "",
+                description: (formData.get("en.description") as string) || "",
+                metaTitle: (formData.get("en.metaTitle") as string) || "",
+                metaDescription: (formData.get("en.metaDescription") as string) || "",
+                keywords: (formData.get("en.keywords") as string) || "",
             }
         }
 

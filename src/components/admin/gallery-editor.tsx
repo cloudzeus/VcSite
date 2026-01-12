@@ -58,7 +58,7 @@ function SortableImage({ asset, isDefault, onSetDefault, onRemove, onEdit }: {
 
     return (
         <div ref={setNodeRef} style={style} className={`group relative w-32 h-32 rounded-xl overflow-hidden border-2 transition-all ${isDefault ? 'border-indigo-500 shadow-md ring-2 ring-indigo-200' : 'border-gray-100 hover:border-gray-300'}`}>
-            {asset.kind === 'VIDEO' || asset.mimeType?.startsWith('video/') ? (
+            {asset.kind === 'VIDEO' ? (
                 <video src={asset.url} className="w-full h-full object-cover" muted loop playsInline />
             ) : (
                 <img src={asset.url} alt="" className="w-full h-full object-cover" />

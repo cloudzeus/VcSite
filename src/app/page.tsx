@@ -44,7 +44,7 @@ export default async function HomePage() {
         text={trans?.heroText}
       />
       <CardsSection films={home?.featuredFilms} />
-      <PressSection items={home?.featuredPress} />
+      <PressSection items={home?.featuredPress || []} />
       <FinalSection />
     </main>
   )
