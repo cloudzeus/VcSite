@@ -58,12 +58,18 @@ export async function upsertMission(data: MissionData) {
                         {
                             lang: 'el',
                             ...el,
+                            title: el.title || "",
+                            shortDescription: el.shortDescription || "",
+                            longDescription: el.longDescription || "",
                             phrases: el.phrases || [],
                             mottos: el.mottos || []
                         },
                         {
                             lang: 'en',
                             ...en,
+                            title: en.title || "",
+                            shortDescription: en.shortDescription || "",
+                            longDescription: en.longDescription || "",
                             phrases: en.phrases || [],
                             mottos: en.mottos || []
                         }
@@ -83,6 +89,9 @@ export async function upsertMission(data: MissionData) {
                             create: {
                                 lang: 'el',
                                 ...el,
+                                title: el.title || "",
+                                shortDescription: el.shortDescription || "",
+                                longDescription: el.longDescription || "",
                                 phrases: el.phrases || [],
                                 mottos: el.mottos || []
                             },
@@ -97,6 +106,9 @@ export async function upsertMission(data: MissionData) {
                             create: {
                                 lang: 'en',
                                 ...en,
+                                title: en.title || "",
+                                shortDescription: en.shortDescription || "",
+                                longDescription: en.longDescription || "",
                                 phrases: en.phrases || [],
                                 mottos: en.mottos || []
                             },
